@@ -11,7 +11,7 @@ from app.models.metadata import Metadata, MetadataMapping, MetadataChoices
 from app.models.cfg_states import verify_state
 from app.routes.bookmarks import is_bookmarked, delete_bookmarks
 from app.routes.tags_mapping import create_tags_mapping, delete_tags_mapping
-
+import distutils
 
 @app.route('/ThreatKB/c2ips', methods=['GET'])
 @auto.doc()
@@ -32,16 +32,20 @@ def get_all_c2ips():
     page_size = request.args.get('page_size', False)
     sort_by = request.args.get('sort_by', False)
     sort_direction = request.args.get('sort_dir', 'ASC')
+    exclude_totals = request.args.get('exclude_totals', False)
+    include_metadata = distutils.util.strtobool(request.args.get('include_metadata', "true"))
 
-    entities = c2ip.C2ip.query.outerjoin(Metadata, Metadata.artifact_type == ENTITY_MAPPING["IP"]).join(MetadataMapping,
-                                                                                                        and_(
-                                                                                                       MetadataMapping.metadata_id == Metadata.id,
-                                                                                                       MetadataMapping.artifact_id == c2ip.C2ip.id))
-
-    if not current_user.admin:
-        entities = entities.filter_by(owner_user_id=current_user.id)
+    entities = c2ip.C2ip.query
 
     searches = json.loads(searches)
+
+    columns = c2ip.C2ip.__table__.columns.keys()
+    if any([column in columns for column, value in searches.items()]):
+        entities = entities.outerjoin(Metadata, Metadata.artifact_type == ENTITY_MAPPING["IP"]).join(MetadataMapping,
+                                                                                                     and_(
+                                                                                                         MetadataMapping.metadata_id == Metadata.id,
+                                                                                                         MetadataMapping.artifact_id == c2ip.C2ip.id))
+
     for column, value in searches.items():
         if not value:
             continue
@@ -57,6 +61,9 @@ def get_all_c2ips():
         except AttributeError, e:
             entities = entities.filter(and_(MetadataMapping.artifact_id == c2ip.C2ip.id, Metadata.key == column,
                                             MetadataMapping.value.like("%" + str(value) + "%")))
+
+    if not current_user.admin:
+        entities = entities.filter_by(owner_user_id=current_user.id)
 
     filtered_entities = entities
     total_count = entities.count()
@@ -75,10 +82,13 @@ def get_all_c2ips():
     filtered_entities = filtered_entities.all()
 
     response_dict = dict()
-    response_dict['data'] = [entity.to_dict() for entity in filtered_entities]
+    response_dict['data'] = [entity.to_dict(include_metadata=include_metadata) for entity in filtered_entities]
     response_dict['total_count'] = total_count
 
-    return Response(json.dumps(response_dict), mimetype='application/json')
+    if exclude_totals:
+        return Response(json.dumps(response_dict['data']), mimetype="application/json")
+    else:
+        return Response(json.dumps(response_dict), mimetype='application/json')
 
 
 @app.route('/ThreatKB/c2ips/<int:id>', methods=['GET'])
