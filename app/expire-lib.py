@@ -20,11 +20,6 @@ import celery
 
 class expirelib():
     def __init__(self,db):
-        self.mysql_user = dbusr
-        self.mysql_pass = dbpass
-        self.mysql_db= dbtable
-        self.mysql_host= dbhost
-        self.mysql_port= dbport
         self.CELERYBEAT_SCHEDULE = {
                 "runs-every-30-seconds":{
                     "task":"tasks.add",
