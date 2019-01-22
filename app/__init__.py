@@ -29,7 +29,7 @@ login_manager.init_app(app)
 bcrypt = Bcrypt(app)
 celery = None
 
-app.config["SQLALCHEMY_ECHO"] = distutils.util.strtobool(os.getenv("SQLALCHEMY_ECHO", "1"))
+app.config["SQLALCHEMY_ECHO"] = distutils.util.strtobool(os.getenv("SQLALCHEMY_ECHO", "0"))
 
 ENTITY_MAPPING = {"SIGNATURE": 1, "DNS": 2, "IP": 3, "TASK": 4, "RELEASE": 5}
 ACTIVITY_TYPE = {"ARTIFACT_CREATED": "Artifact Created",

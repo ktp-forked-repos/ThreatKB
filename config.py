@@ -7,8 +7,8 @@ SQL_PROTOCOL = os.getenv('SQL_PROTOCOL', 'mysql')
 SQL_HOST = os.getenv('SQL_HOST', '127.0.0.1')
 SQL_PORT = os.getenv('SQL_PORT', '3306')
 SQL_DATABASE = os.getenv('SQL_DATABASE', 'threatkb')
-SQL_USERNAME = os.getenv('SQL_USERNAME', 'root')
-SQL_PASSWORD = os.getenv('SQL_PASSWORD', 'yourpassword')
+SQL_USERNAME = os.getenv('SQL_USERNAME', 'threatkb')
+SQL_PASSWORD = os.getenv('SQL_PASSWORD', 'vR0MfBo6LMO0A7')
 SQLALCHEMY_DATABASE_URI = '{protocol}://{username}:{password}@{hostname}:{port}/{database}?use_unicode=1&charset=utf8'.format(
     protocol = SQL_PROTOCOL,
     username = SQL_USERNAME,
