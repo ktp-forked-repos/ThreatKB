@@ -15,6 +15,7 @@ class expirelib:
                     "args":(16,16)
                 },
             }
+
     def log_to_c2_comment(self, c2):
         result = db.session.query(c2ip.C2ip).all()
 
@@ -22,20 +23,17 @@ class expirelib:
     def expiration_daemon(self):
         result = db.session.query(c2ip.C2ip).all()
         for row in result:
-            print(row.state)
             if(row.expiration_timestamp is not None):
-                if(row.expiration_timestamp < datetime.now()):
-                    row.state= "Retired"
-                    print("EXPIRED")
-                    db.session.execute("""UPDATE c2ip SET state = "Retired" WHERE id="""+str(row.id))
-                    print("Updated")
-        db.session.flush()
+                if(row.state != "Retired"):
+                    if(row.expiration_timestamp < datetime.now()):
+                        db.session.execute("""UPDATE c2ip SET state = "Retired" WHERE id="""+str(row.id))
+        db.session.commit()
             
 
 
 
-test = expirelib()
-test.expiration_daemon()
+#test = expirelib()
+#test.expiration_daemon()
 #if(test.isExpired("2019-01-10 21:03:02")):
 #    print("Expired")
 #else:
