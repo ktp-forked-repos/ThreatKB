@@ -24,6 +24,8 @@ from app.models.cfg_settings import Cfg_settings
 from app.models.yara_rule import Yara_testing_history, Yara_rule
 
 
+import pprint
+
 @app.route('/ThreatKB/test_yara_rule/<int:rule_id>', methods=['GET'])
 @auto.doc()
 @login_required
@@ -31,6 +33,10 @@ def test_yara_rule_rest(rule_id):
     """Synchronously test yara rule associated with rule_id against all files attached to it
     Return: results dictionary"""
     yara_rule_entity = yara_rule.Yara_rule.query.get(rule_id)
+    app.logger.debug("Entity Data: ")
+    pprint.pprint(vars(yara_rule_entity))
+    app.logger.debug("Entity File Data: ")
+    pprint.pprint(vars(yara_rule_entity.files))
     if not yara_rule_entity:
         abort(500)
 
@@ -82,6 +88,7 @@ def test_yara_rule(yara_rule_entity, files_to_test, user, is_async=False):
 
     processes = []
     manager_dicts = []
+    
     for file_path in files_to_test:
         total_file_count += 1
 

@@ -57,7 +57,7 @@ class Yara_rule(db.Model):
 
     files = db.relationship("Files", foreign_keys=[id],
                             primaryjoin="and_(Files.entity_id==Yara_rule.id, Files.entity_type=='%s')" % (
-                                ENTITY_MAPPING["SIGNATURE"]), cascade="all,delete")
+                                ENTITY_MAPPING["SIGNATURE"]), cascade="all,delete", uselist=True)
 
     history = db.relationship("Yara_rule_history", foreign_keys=[id],
                               primaryjoin="Yara_rule_history.yara_rule_id==Yara_rule.id",

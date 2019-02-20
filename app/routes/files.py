@@ -21,7 +21,6 @@ def get_all_files():
     Return: list of file dictionary"""
     entity_type = request.args.get("entity_type", None)
     entity_id = request.args.get("entity_id", None)
-
     entities = files.Files.query.filter_by(entity_type=entity_type,
                                            entity_id=entity_id).all()
     return Response(json.dumps([entity.to_dict() for entity in entities]), mimetype="application/json")
@@ -233,4 +232,35 @@ def delete_file(file_id):
 
     db.session.delete(entity)
     db.session.commit()
+    return '', 204
+
+
+@app.route('/ThreatKB/files/delete/<string:entity_type>/<int:entity_id>/<int:file_id>', methods=['GET'])
+@auto.doc()
+@login_required
+@admin_only()
+def delete_file_entity(entity_type, entity_id, file_id):
+    """Delete file associated with given file_id
+    Return: None"""
+    
+    print("DELETING FILE ENTITY: "+str(file_id))
+    
+    sel_file = files.Files.query.get(file_id)
+    if not sel_file:
+        abort(404)
+
+    print("Selected file vars: ")
+    print(str(vars(sel_file)))
+    full_path = os.path.join(app.config['FILE_STORE_PATH'])
+    #full_path = os.path.join(app.config['FILE_STORE_PATH'],
+                             #sel_file.entity_type if sel_file.entity_type else "",
+                             #sel_file.entity_id if sel_file.entity_id else "")
+                             #secure_filename(str(sel_file.filename)))
+    print("full path: "+full_path)
+
+    #if os.path.exists(full_path):
+    #    os.remove(full_path)
+
+    #db.session.delete(entity)
+    #db.session.commit()
     return '', 204
