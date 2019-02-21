@@ -438,7 +438,8 @@
                                         <div class="pull-right">
 
 						<a title="Delete File" ng-confirm-click="Are you sure you want to delete this attached file?"
-			     href="ThreatKB/files/delete/{{ f.entity_type }}/{{ f.entity_id }}/{{ f.id }}">
+			     
+			     	               	    href="ThreatKB/files/delete/{{ f.entity_type }}/{{ f.entity_id }}/{{ f.id }}?path={{ file_store_path.value }}/{{ entity_mapping.SIGNATURE }}/{{ f.entity_id }}/{{ f.filename }}">
 
                                                     <span class="glyphicon glyphicon-remove-circle"></span>
    					        </a>

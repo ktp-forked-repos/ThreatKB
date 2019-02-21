@@ -1,6 +1,6 @@
 from app import app, db, admin_only, auto, ENTITY_MAPPING
 from app.models import cfg_settings, files
-from flask import abort, jsonify, request, send_file, json, Response
+from flask import abort, jsonify, redirect,request, send_file, json, Response
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 import os
@@ -240,27 +240,19 @@ def delete_file(file_id):
 @login_required
 @admin_only()
 def delete_file_entity(entity_type, entity_id, file_id):
-    """Delete file associated with given file_id
+    """Delete file_entity associated with given file_id and entity_id
     Return: None"""
     
-    print("DELETING FILE ENTITY: "+str(file_id))
-    
     sel_file = files.Files.query.get(file_id)
+    full_path= request.args.get("path")
     if not sel_file:
         abort(404)
+    if not full_path:
+        abort(404)
 
-    print("Selected file vars: ")
-    print(str(vars(sel_file)))
-    full_path = os.path.join(app.config['FILE_STORE_PATH'])
-    #full_path = os.path.join(app.config['FILE_STORE_PATH'],
-                             #sel_file.entity_type if sel_file.entity_type else "",
-                             #sel_file.entity_id if sel_file.entity_id else "")
-                             #secure_filename(str(sel_file.filename)))
-    print("full path: "+full_path)
+    if os.path.exists(full_path):
+        os.remove(full_path)
 
-    #if os.path.exists(full_path):
-    #    os.remove(full_path)
-
-    #db.session.delete(entity)
-    #db.session.commit()
-    return '', 204
+    db.session.delete(sel_file)
+    db.session.commit()
+    return redirect("/#!/yara_rules", code=200)
