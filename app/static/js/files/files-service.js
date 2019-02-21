@@ -6,7 +6,8 @@ angular.module('ThreatKB')
             resource: $resource('ThreatKB/files/:id', {}, {
                 'query': {method: 'GET', isArray: true},
                 'get': {method: 'GET'},
-                'update': {method: 'PUT'}
+                'update': {method: 'PUT'},
+		'delete': {method: 'DELETE'}
             }),
             ENTITY_MAPPING: {SIGNATURE: 1}
         };

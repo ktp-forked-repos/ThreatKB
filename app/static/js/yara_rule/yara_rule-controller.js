@@ -2,6 +2,7 @@
 
 angular.module('ThreatKB')
     .controller('Yara_ruleController', ['$scope', '$timeout', '$filter', '$http', '$uibModal', 'Yara_rule', 'Cfg_states', 'CfgCategoryRangeMapping', 'Users', 'growl', 'openModalForId', 'uiGridConstants', 'FileSaver', 'Blob', 'Cfg_settings', '$routeParams',
+
         function ($scope, $timeout, $filter, $http, $uibModal, Yara_rule, Cfg_states, CfgCategoryRangeMapping, Users, growl, openModalForId, uiGridConstants, FileSaver, Blob, Cfg_settings, $routeParams) {
 
             $scope.users = Users.query();
@@ -38,6 +39,7 @@ angular.module('ThreatKB')
             $scope.disable_multi_actions = function () {
                 return $scope.checked_counter < 1;
             };
+
             $scope.get_index_from_row = function (row) {
                 for (var i = 0; i < row.grid.rows.length; i++) {
                     if (row.uid === row.grid.rows[i].uid) {
@@ -75,7 +77,7 @@ angular.module('ThreatKB')
                     $scope.checked_indexes[i] = true;
                 }
                 $scope.checked_counter = $scope.checked_indexes.length;
-            };
+            }
 
             $scope.copy_rules = function () {
                 var c = new Clipboard('.btn', {
@@ -595,6 +597,7 @@ angular.module('ThreatKB')
             }
         }])
     .controller('Yara_ruleSaveController', ['$scope', '$http', '$cookies', '$uibModalInstance', '$location', 'yara_rule', 'yara_rules', 'metadata', 'Cfg_states', 'Comments', 'Upload', 'Files', 'CfgCategoryRangeMapping', 'growl', 'Users', 'Tags', 'Yara_rule', 'Cfg_settings', 'Bookmarks', 'hotkeys',
+
         function ($scope, $http, $cookies, $uibModalInstance, $location, yara_rule, yara_rules, metadata, Cfg_states, Comments, Upload, Files, CfgCategoryRangeMapping, growl, Users, Tags, Yara_rule, Cfg_settings, Bookmarks, hotkeys) {
 
             $scope.yara_rule = yara_rule;
@@ -606,6 +609,12 @@ angular.module('ThreatKB')
             $scope.selected_signature = null;
 
             $scope.users = Users.query();
+	
+	    $scope.filesDelete = function (id){
+	        Files.resource.delete({
+			"id":id
+		});
+	    }
 
             $scope.wrap_editor = ($cookies.get("wrap_editor") === "true");
 

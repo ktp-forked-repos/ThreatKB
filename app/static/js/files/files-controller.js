@@ -5,7 +5,6 @@ angular.module('ThreatKB')
         function ($scope, $uibModal, resolvedFiles, Files, Upload, growl) {
 
             $scope.files = resolvedFiles;
-
             $scope.customSearch = function(actual, expected) {
                 if (expected.length < 3) {
                     return true;
@@ -17,6 +16,7 @@ angular.module('ThreatKB')
             };
 
             $scope.delete = function (id) {
+		console.log($scope.files)
                 Files.resource.delete({id: id}, function () {
                     $scope.files = Files.resource.query();
                 });

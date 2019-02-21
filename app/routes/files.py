@@ -223,10 +223,16 @@ def delete_file(file_id):
     if not entity:
         abort(404)
 
-    full_path = os.path.join(app.config['FILE_STORE_PATH'],
-                             entity.entity_type if entity.entity_type else "",
-                             entity.entity_id if entity.entity_id else "",
+
+
+    full_path = os.path.join(cfg_settings.Cfg_settings.get_setting("FILE_STORE_PATH"),
+                             str(entity.entity_type) ,
+                             str(entity.entity_id),
                              secure_filename(entity.filename))
+
+    if not os.path.exists(full_path):
+        abort(404)
+
     if os.path.exists(full_path):
         os.remove(full_path)
 
@@ -234,25 +240,3 @@ def delete_file(file_id):
     db.session.commit()
     return '', 204
 
-
-@app.route('/ThreatKB/files/delete/<string:entity_type>/<int:entity_id>/<int:file_id>', methods=['GET'])
-@auto.doc()
-@login_required
-@admin_only()
-def delete_file_entity(entity_type, entity_id, file_id):
-    """Delete file_entity associated with given file_id and entity_id
-    Return: None"""
-    
-    sel_file = files.Files.query.get(file_id)
-    full_path= request.args.get("path")
-    if not sel_file:
-        abort(404)
-    if not full_path:
-        abort(404)
-
-    if os.path.exists(full_path):
-        os.remove(full_path)
-
-    db.session.delete(sel_file)
-    db.session.commit()
-    return redirect("/#!/yara_rules", code=200)
