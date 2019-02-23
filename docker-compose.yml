@@ -39,5 +39,25 @@ services:
        SQL_PROTOCOL: mysql
        LISTEN_ON: 0.0.0.0
        LISTEN_PORT: 5000
+   threatkb_tester_agent:
+     depends_on:
+       - db
+     image: threatkb:latest
+     restart: always
+     environment:
+       RUN_AGENT: 1
+       MYSQL_ROOT_PASSWORD: P@sswordsRC00l
+       SQL_DATABASE: threatkb
+       SQL_USERNAME: threatkb
+       SQL_PASSWORD: P@sswordsRC00l
+       SQL_PORT: 3306
+       SQL_HOST: db
+       SQL_PROTOCOL: mysql
+       LISTEN_ON: 0.0.0.0
+       LISTEN_PORT: 5000
+       REDIS_ACCEPT_CONTENT: '["json"]'
+       REDIS_RESULT_SERIALIZER: json
+       REDIS_TASK_SERIALIZER: json
+       REDIS_BROKER_URL: 'redis://redis:6379/0'
 volumes:
     db_data:
